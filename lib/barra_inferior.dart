@@ -7,8 +7,7 @@ import 'pantalla_inventario.dart';
 class BarraInferior extends StatelessWidget {
   final int selectedIndex;
 
-  const BarraInferior({Key? key, required this.selectedIndex})
-      : super(key: key);
+  const BarraInferior({super.key, required this.selectedIndex});
 
   @override
   Widget build(BuildContext context) {

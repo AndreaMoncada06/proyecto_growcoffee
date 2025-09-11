@@ -6,8 +6,7 @@ import 'calendario_diario.dart';
 class BarraSuperiorCalendario extends StatelessWidget {
   final int seleccionado; // 0 = mensual, 1 = semanal, 2 = diario
 
-  const BarraSuperiorCalendario({Key? key, required this.seleccionado})
-      : super(key: key);
+  const BarraSuperiorCalendario({super.key, required this.seleccionado});
 
   @override
   Widget build(BuildContext context) {

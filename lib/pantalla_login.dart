@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class PantallaLogin extends StatefulWidget {
   @override
@@ -8,6 +10,42 @@ class PantallaLogin extends StatefulWidget {
 class _PantallaLoginState extends State<PantallaLogin> {
   String? _rolSeleccionado; // Para guardar el rol elegido
   final Color kBrown = const Color(0xFF6B3E2E);
+
+  // Controladores de texto para usuario y contraseña
+  final TextEditingController usuarioController = TextEditingController();
+  final TextEditingController claveController = TextEditingController();
+
+  // Función para hacer login al backend
+  Future<void> login() async {
+    if (_rolSeleccionado == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor selecciona un rol')),
+      );
+      return;
+    }
+
+    final response = await http.post(
+      Uri.parse('http://10.0.2.2:8080/api/login'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "usuario": usuarioController.text,
+        "clave": claveController.text,
+        "rol": _rolSeleccionado,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      print("Login exitoso: $data");
+
+      // Navega a la pantalla principal
+      Navigator.pushNamed(context, '/principal');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error en login: ${response.statusCode}')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,16 +75,18 @@ class _PantallaLoginState extends State<PantallaLogin> {
               child: Column(
                 children: [
                   TextField(
+                    controller: usuarioController,
                     decoration: const InputDecoration(labelText: 'Usuario'),
                   ),
                   const SizedBox(height: 20),
                   TextField(
+                    controller: claveController,
                     obscureText: true,
                     decoration: const InputDecoration(labelText: 'Contraseña'),
                   ),
                   const SizedBox(height: 20),
 
-                  // Menú desplegable con estilo Figma
+                  // Menú desplegable con estilo
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
@@ -114,17 +154,7 @@ class _PantallaLoginState extends State<PantallaLogin> {
                         vertical: 12,
                       ),
                     ),
-                    onPressed: () {
-                      if (_rolSeleccionado != null) {
-                        Navigator.pushNamed(context, '/principal');
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Por favor selecciona un rol'),
-                          ),
-                        );
-                      }
-                    },
+                    onPressed: login, // 👈 ahora llama al backend
                     child: const Text('Iniciar sesión'),
                   ),
                   const SizedBox(height: 20),

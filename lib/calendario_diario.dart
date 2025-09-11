@@ -6,7 +6,7 @@ const Color kBackground = Color(0xFFFCF5D8);
 const Color kBrown = Color(0xFF6B3E2E);
 
 class CalendarioDiario extends StatefulWidget {
-  const CalendarioDiario({Key? key}) : super(key: key);
+  const CalendarioDiario({super.key});
 
   @override
   State<CalendarioDiario> createState() => _CalendarioDiarioState();
